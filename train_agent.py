@@ -107,7 +107,7 @@ PARSER.add_argument('--target_network_reset_interval',
                     help=('number of experiences to accumulate before target Q-network values '
                           'reset to real Q-network values'),
                     type=float,
-                    default=1000)
+                    default=200)
 
 PARSER.add_argument('--batch_size',
                     metavar='EXPERIENCES',
@@ -115,23 +115,41 @@ PARSER.add_argument('--batch_size',
                     type=int,
                     default=64)
 
-PARSER.add_argument('--learning_rate',
+PARSER.add_argument('--num_hidden_units',
+                    metavar='NEURONS',
+                    help='number of units in the hidden layer of the network',
+                    type=int,
+                    default=40)
+
+PARSER.add_argument('--initial_learning_rate',
                     metavar='LAMBDA',
-                    help='rate at which the network learns from new examples',
+                    help='initial speed with which the network learns from new examples',
                     type=float,
-                    default=1e-5)
+                    default=1e-3)
+
+PARSER.add_argument('--learning_rate_decay_factor',
+                    metavar='PERCENTAGE',
+                    help='value with which the learning rate is multiplied when it decays',
+                    type=float,
+                    default=0.9)
+
+PARSER.add_argument('--learning_rate_decay_frequency',
+                    metavar='TRAINING STEPS',
+                    help='frequency at which the learning rate is reduced',
+                    type=int,
+                    default=1000)
 
 PARSER.add_argument('--max_gradient_norm',
                     metavar='DELTA',
                     help='maximum value allowed for the L2-norms of gradients',
                     type=float,
-                    default=10)
+                    default=40)
 
 PARSER.add_argument('--discount',
                     metavar='GAMMA',
                     help='discount factor for future rewards',
                     type=float,
-                    default=0.99)
+                    default=0.9)
 
 PARSER.add_argument('--gpu_memory_alloc',
                     metavar='PERCENTAGE',
@@ -261,7 +279,10 @@ def main(args):
                              args.train_interval,
                              args.target_network_reset_interval,
                              args.batch_size,
-                             args.learning_rate,
+                             args.num_hidden_units,
+                             args.initial_learning_rate,
+                             args.learning_rate_decay_factor,
+                             args.learning_rate_decay_frequency,
                              args.max_gradient_norm,
                              args.discount)
 
@@ -293,6 +314,8 @@ def main(args):
                                           simple_value=env.episode_reward)
                         summary.value.add(tag='training/fps', simple_value=env.fps)
                         summary.value.add(tag='training/epsilon', simple_value=player.epsilon)
+                        summary.value.add(tag='training/learning_rate',
+                                          simple_value=float(player.dqn.learning_rate.eval()))
 
                         total_time_steps = args.train_interval * player.dqn.global_step.eval()
                         summary_writer.add_summary(summary, total_time_steps)

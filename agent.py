@@ -6,7 +6,6 @@ Heavily influenced by DeepMind's seminal paper 'Playing Atari with Deep Reinforc
 """
 
 import dqn
-import math
 import numpy as np
 import random
 import tensorflow as tf
@@ -22,7 +21,10 @@ class Agent():
                  train_interval,
                  target_network_reset_interval,
                  batch_size,
-                 learning_rate,
+                 num_hidden_units,
+                 initial_learning_rate,
+                 learning_rate_decay_factor,
+                 learning_rate_decay_frequency,
                  max_gradient_norm,
                  discount):
         """An agent that learns to maximize its score using deep Q-learning.
@@ -40,7 +42,12 @@ class Agent():
             target_network_reset_interval: Rate at which target Q-network values reset to actual
                 Q-network values. Using a delayed target Q-network improves training stability.
             batch_size: Number of experiences sampled and trained on at once.
-            learning_rate: The speed with which the network learns from new examples.
+            num_hidden_units: Number of units in the hidden layer of the network.
+            initial_learning_rate: Initial speed with which the network learns from new examples.
+            learning_rate_decay_factor: The value with which the learning rate is multiplied when it
+                decays.
+            learning_rate_decay_frequency: The frequency (measured in training steps) at which the
+                learning rate is reduced.
             max_gradient_norm: Maximum value allowed for the L2-norms of gradients. Gradients with
                 norms that would otherwise surpass this value are scaled down.
             discount: Discount factor for future rewards.
@@ -49,9 +56,12 @@ class Agent():
         self.sess = sess
         self.env = env
         self.dqn = dqn.DeepQNetwork(sess,
-                                    len(env.action_space),
                                     env.num_features,
-                                    learning_rate,
+                                    num_hidden_units,
+                                    len(env.action_space),
+                                    initial_learning_rate,
+                                    learning_rate_decay_factor,
+                                    learning_rate_decay_frequency,
                                     max_gradient_norm)
         self.start_epsilon = start_epsilon
         self.end_epsilon = end_epsilon
@@ -67,9 +77,12 @@ class Agent():
         # Create target Q-network.
         dqn_params = tf.trainable_variables()
         self.target_dqn = dqn.DeepQNetwork(sess,
-                                           len(env.action_space),
                                            env.num_features,
-                                           learning_rate,
+                                           num_hidden_units,
+                                           len(env.action_space),
+                                           initial_learning_rate,
+                                           learning_rate_decay_factor,
+                                           learning_rate_decay_frequency,
                                            max_gradient_norm)
         target_dqn_params = tf.trainable_variables()[len(dqn_params):]
 
