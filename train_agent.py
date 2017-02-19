@@ -46,7 +46,7 @@ PARSER.add_argument('--num_epochs',
                     metavar='EPOCHS',
                     help='number of epochs to train for',
                     type=int,
-                    default=200)
+                    default=100)
 
 PARSER.add_argument('--epoch_length',
                     metavar='TIME STEPS',
@@ -113,7 +113,7 @@ PARSER.add_argument('--batch_size',
                     metavar='EXPERIENCES',
                     help='number of experiences sampled and trained on at once',
                     type=int,
-                    default=64)
+                    default=256)
 
 PARSER.add_argument('--num_hidden_units',
                     metavar='NEURONS',
