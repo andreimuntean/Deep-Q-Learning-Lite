@@ -21,6 +21,8 @@ def _fully_connected_layer(x, shape, bias_shape, activation_fn):
 
 
 class DeepQNetwork():
+    """A neural network that learns the Q (action value) function."""
+
     def __init__(self, num_features, num_hidden_units, num_actions):
         """Creates a deep Q-network that is implemented using a single hidden layer.
 

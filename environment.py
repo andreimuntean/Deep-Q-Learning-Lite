@@ -7,6 +7,7 @@ Heavily influenced by DeepMind's seminal paper 'Playing Atari with Deep Reinforc
 
 import gym
 import numpy as np
+import random
 import time
 
 
@@ -121,7 +122,7 @@ class EnvironmentWrapper:
     def sample_action(self):
         """Samples a random action."""
 
-        return np.random.choice(self.action_space)
+        return random.choice(self.action_space)
 
     def sample_experiences(self, exp_count):
         """Randomly samples experiences from the replay memory. May contain duplicates.
