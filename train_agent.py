@@ -7,11 +7,8 @@ Heavily influenced by DeepMind's seminal paper 'Playing Atari with Deep Reinforc
 
 import agent
 import argparse
-import csv
-import datetime
 import environment
 import logging
-import numpy as np
 import os
 import random
 import tensorflow as tf
@@ -184,6 +181,9 @@ def main(args):
     summary_dir = os.path.join(args.log_dir, 'summary')
     summary_writer = tf.summary.FileWriter(summary_dir)
 
+    if not os.path.exists(checkpoint_dir):
+        os.makedirs(checkpoint_dir)
+
     config = tf.ConfigProto()
     config.gpu_options.per_process_gpu_memory_fraction = args.gpu_memory_alloc
 
@@ -238,9 +238,6 @@ def main(args):
                         summary_writer.flush()
 
                     num_episodes_finished += 1
-
-            if not os.path.exists(checkpoint_dir):
-                os.makedirs(checkpoint_dir)
 
             file_name = '{}.{:05d}-of-{:05d}'.format(args.env_name, epoch_i, args.num_epochs)
             model_path = os.path.join(checkpoint_dir, file_name)
