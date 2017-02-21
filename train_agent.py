@@ -163,7 +163,7 @@ PARSER.add_argument('--gpu_memory_alloc',
                     default=0.25)
 
 PARSER.add_argument('--summary_update_interval',
-                    metavar='TRAINING STEPS',
+                    metavar='EPISODES',
                     help='frequency at which summary data is updated',
                     type=int,
                     default=20)
