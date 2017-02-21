@@ -1,9 +1,9 @@
+"""Tests a trained agent's ability to maximize its score in OpenAI Gym environments."""
+
 import argparse
 import agent
 import environment
-import gym
 import logging
-import numpy as np
 import tensorflow as tf
 
 from gym import wrappers
@@ -76,17 +76,17 @@ def main(args):
 
             for t in range(args.max_episode_length):
                 state = env.get_state()
-                action_i = player.get_action(state)
-                reward = env.step(env.action_space[action_i])
+                action = player.get_action(state)
+                reward = env.step(action)
                 episode_reward += reward
 
                 if args.render:
                     env.render()
 
                 if env.done:
-                    LOGGER.info(
-                        'Episode finished after %d time steps. Reward: %d.', t + 1, episode_reward)
                     break
+
+            LOGGER.info('Episode finished after %d time steps. Reward: %d.', t + 1, episode_reward)
 
 
 if __name__ == '__main__':
