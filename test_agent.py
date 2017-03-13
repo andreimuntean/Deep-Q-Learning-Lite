@@ -14,13 +14,10 @@ LOGGER.setLevel(logging.INFO)
 
 PARSER = argparse.ArgumentParser()
 
-PARSER.add_argument('-env_name',
-                    metavar='ENVIRONMENT',
-                    help='name of the OpenAI Gym environment that will be played')
 
-PARSER.add_argument('-load_path',
-                    metavar='PATH',
-                    help='loads the trained model from the specified path')
+PARSER.add_argument('env_name', help='name of the OpenAI Gym environment that will be played')
+
+PARSER.add_argument('load_path', help='loads the trained model from the specified path')
 
 PARSER.add_argument('--save_path',
                     metavar='PATH',
@@ -29,8 +26,10 @@ PARSER.add_argument('--save_path',
 
 PARSER.add_argument('--render',
                     help='determines whether to display the game screen of the agent',
-                    type=bool,
-                    default=True)
+                    dest='render',
+                    action='store_true')
+
+PARSER.set_defaults(render=False)
 
 PARSER.add_argument('--num_episodes',
                     help='number of episodes to play',
@@ -63,6 +62,8 @@ def main(args):
 
     if args.save_path:
         env.gym_env = wrappers.Monitor(env.gym_env, args.save_path)
+
+    env.reset()
 
     with tf.Session() as sess:
         player = agent.TestOnlyAgent(env, args.num_hidden_units)
