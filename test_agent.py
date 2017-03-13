@@ -14,23 +14,20 @@ LOGGER.setLevel(logging.INFO)
 
 PARSER = argparse.ArgumentParser()
 
-PARSER.add_argument('-env_name',
-                    metavar='ENVIRONMENT',
-                    help='name of the OpenAI Gym environment that will be played')
+PARSER.add_argument('env_name', help='name of the OpenAI Gym environment that will be played')
 
-PARSER.add_argument('-load_path',
-                    metavar='PATH',
-                    help='loads the trained model from the specified path')
+PARSER.add_argument('load_path', help='loads the trained model from the specified path')
 
 PARSER.add_argument('--save_path',
                     metavar='PATH',
-                    default=None,
-                    help='path where to save experiments and videos')
+                    help='path where to save experiments and videos',
+                    default=None)
 
 PARSER.add_argument('--render',
                     help='determines whether to display the game screen of the agent',
-                    type=bool,
-                    default=True)
+                    dest='render',
+                    action='store_true',
+                    default=False)
 
 PARSER.add_argument('--num_episodes',
                     help='number of episodes to play',
