@@ -2,6 +2,7 @@
 Deep reinforcement learning for environments with small state spaces.
 
 ## Dependencies
+* NumPy
 * OpenAI Gym 0.8
 * TensorFlow 1.0
 
