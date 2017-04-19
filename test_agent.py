@@ -1,9 +1,10 @@
 """Tests a trained agent's ability to maximize its score in OpenAI Gym environments."""
 
-import argparse
 import agent
+import argparse
 import environment
 import logging
+import random
 import tensorflow as tf
 
 from gym import wrappers
@@ -27,9 +28,8 @@ PARSER.add_argument('--save_path',
 PARSER.add_argument('--render',
                     help='determines whether to display the game screen of the agent',
                     dest='render',
-                    action='store_true')
-
-PARSER.set_defaults(render=False)
+                    action='store_true',
+                    default=False)
 
 PARSER.add_argument('--num_episodes',
                     help='number of episodes to play',
@@ -46,6 +46,12 @@ PARSER.add_argument('--max_episode_length',
                     help='maximum number of time steps per episode',
                     type=int,
                     default=5000)
+
+PARSER.add_argument('--epsilon',
+                    metavar='EPSILON',
+                    help='likelihood that the agent selects a random action',
+                    type=float,
+                    default=0)
 
 PARSER.add_argument('--num_hidden_units',
                     metavar='NEURONS',
@@ -76,8 +82,12 @@ def main(args):
             episode_reward = 0
 
             for t in range(args.max_episode_length):
-                state = env.get_state()
-                action = player.get_action(state)
+                # Occasionally try a random action.
+                if random.random() < args.epsilon:
+                    action = env.sample_action()
+                else:
+                    action = player.get_action(env.get_state())
+
                 reward = env.step(action)
                 episode_reward += reward
 
