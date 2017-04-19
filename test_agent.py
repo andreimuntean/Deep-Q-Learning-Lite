@@ -7,8 +7,6 @@ import logging
 import random
 import tensorflow as tf
 
-from gym import wrappers
-
 
 LOGGER = logging.getLogger(__name__)
 LOGGER.setLevel(logging.INFO)
@@ -64,12 +62,7 @@ def main(args):
     """Loads a trained agent that maximizes its score in OpenAI Gym environments."""
 
     env = environment.EnvironmentWrapper(
-        args.env_name, args.max_episode_length, 100, args.action_space)
-
-    if args.save_path:
-        env.gym_env = wrappers.Monitor(env.gym_env, args.save_path)
-
-    env.reset()
+        args.env_name, args.max_episode_length, 100, args.action_space, args.save_path)
 
     with tf.Session() as sess:
         player = agent.TestOnlyAgent(env, args.num_hidden_units)

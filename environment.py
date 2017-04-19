@@ -10,11 +10,18 @@ import numpy as np
 import random
 import time
 
+from gym import wrappers
+
 
 class EnvironmentWrapper:
     """Wraps over an OpenAI Gym environment and provides experience replay."""
 
-    def __init__(self, env_name, max_episode_length, replay_memory_capacity, action_space=None):
+    def __init__(self,
+                 env_name,
+                 max_episode_length,
+                 replay_memory_capacity,
+                 action_space=None,
+                 save_path=None):
         """Creates the wrapper.
 
         Args:
@@ -26,9 +33,14 @@ class EnvironmentWrapper:
                 the agent during training.
             action_space: A list of possible actions. If 'action_space' is 'None' and no default
                 configuration exists for this environment, all actions will be allowed.
+            save_path: Path where to save experiments and videos.
         """
 
         self.gym_env = gym.make(env_name)
+
+        if save_path:
+            self.gym_env = wrappers.Monitor(self.gym_env, save_path)
+
         self.max_episode_length = max_episode_length
         self.replay_memory_capacity = replay_memory_capacity
         self.num_features = self.gym_env.observation_space.shape[0]
@@ -51,7 +63,7 @@ class EnvironmentWrapper:
         self.observations = np.empty([replay_memory_capacity + 1, self.num_features], np.float32)
 
         # Initialize the first state.
-        self.observations[0] = self.gym_env.reset()
+        self.observations[0], _, _, _ = self.gym_env.step(self.sample_action())
 
         # Initialize the first experience by performing one more random action.
         self.step(self.sample_action())
